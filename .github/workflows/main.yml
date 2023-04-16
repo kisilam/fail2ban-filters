@@ -1,16 +1,32 @@
-name: remote ssh command
-on: [push]
+name: CI
+on: [push, pull_request]
 jobs:
-
-  build:
-    name: Build
+  # test:
+  #   ...
+  deploy:
+    name: "Deploy to staging"
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    # needs: test
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: 194.28.84.49
-        username: builder
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        script: whoami
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
+
+      - name: Stop the server
+        run: ssh staging 'ls -l ~'
+
+      
