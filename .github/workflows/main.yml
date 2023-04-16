@@ -13,6 +13,6 @@ jobs:
       with:
         host: 194.28.84.49
         username: builder
-        key: ${{ SSH_PRIVATE_KEY.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
                     ls -l ~
