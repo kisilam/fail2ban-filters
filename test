@@ -1,1 +1,19 @@
-test
+[Definition] 
+
+failregex =  .* <HOST> - - .* "POST /xmlrpc.php HTTP/.*" .* .* "-" .*  
+
+             .* <HOST> - - .* "GET .*/wp-login.php HTTP/.*" .* .* .* .* 
+
+             .* <HOST> - - .* "POST /wp-login.php HTTP/.*" .* .* .* .* # these 3 are already handled by one of our own cronjobs /root/bin/ they get collected and blocked on all shared webslaves 
+
+             .* <HOST> - - .* "HEAD /plugins/content/.*" .* .* "-" .*      # I've never encountered one of these before so I guess it's not necessary
+
+             .* <HOST> - - .* "POST|GET /cms/administrator/index.php HTTP/.*" .* .* "-" .* # is also handled by /root/bin/
+
+             .* <HOST> - - .* "GET /index.php?searchword=.*" .* .* "-" .* # seems like a joomla search, can produce very much false positives 
+
+             .* <HOST> - - .* "GET / HTTP/.*" .* .* "-" .* #Might be put as another rule with more wisdom maxretry value # matching the request to / can produce very much false positives 
+
+             .* <HOST> - - .* "GET /thematics.cgi.*" .* .* "-" .* #Might be put as another rule with more wisdom maxretry value# never encountered this one i think this one is even legit since this file isn't used by any cms 
+
+
